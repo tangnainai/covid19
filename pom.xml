@@ -162,6 +162,8 @@
                 </configuration>
             </plugin>
         </plugins>
+        <!--修改jar包名字-->
+        <finalName>covid19</finalName>
     </build>
 
 </project>

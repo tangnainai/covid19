@@ -186,7 +186,7 @@ public class Covid19Controller {
         List<Integer> confirmedIncr = new ArrayList<>();
         List<Integer> deadIncr = new ArrayList<>();
         List<Integer> dateId = new ArrayList<>();
-        String provinces = historyService.list().get(0).getProvinceName();
+        String provinces = detailsService.list().get(0).getProvinceShortName();
 
         for (int i = page.getRecords().size()-1; i >= 0; i--) {
             confirmedIncr.add(page.getRecords().get(i).getConfirmedIncr());

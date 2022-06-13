@@ -5,7 +5,7 @@ function getTime() {
         url:"/time",
         timeout: 10000,
         success:function(data){
-            $("#time").html(data)
+            $("#time").html(data).color("#000")
         },
         error:function (xhr,type,errorThrown) {
         }

@@ -1,8 +1,8 @@
-DB Configuration:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/epidemic?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
+#    url: jdbc:mysql://120.24.229.94:3306/epidemic?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
     username: root
     password: 123456
   mvc:
@@ -13,7 +13,7 @@ spring:
     cache: false
 
 mybatis-plus:
-  type-aliases-package: com.tang.bean
+  type-aliases-package: com.tang.entity
   mapper-locations: classpath:/mapper/*.xml
   global-config:
     db-config:

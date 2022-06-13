@@ -13,36 +13,38 @@ import com.tang.service.IMostSeriousService;
 import com.tang.service.TrendService;
 import com.tang.utils.HttpUtils;
 import com.tang.utils.TimeUtils;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Component
 public class Covid19Crawler {
-    @Autowired
+    @Resource
     private DetailsService detailsService;
-    @Autowired
+    @Resource
     private HistoryService historyService;
-    @Autowired
+    @Resource
     private TrendService trendService;
-    @Autowired
+    @Resource
     private IMostSeriousService mostSeriousService;
 
-    // 获取时间
-    private static String time = TimeUtils.format(System.currentTimeMillis(),"yy-MM-dd HH:mm:ss");
-    // 爬取疫情数据页面
-    private static Document doc = Jsoup.parse(HttpUtils.getHtml("https://ncov.dxy.cn/ncovh5/view/pneumonia"));
-
     @Bean
-    @Scheduled(cron = "0 0 12 * * ?")
+    @Scheduled(cron = "0 0 12/23 * * ?") // 每天12点执行
+//    @Scheduled(cron = "0 0/1 * * * ? ")  // 每分钟执行一次
     public void detailsCrawler(){
+        String time = TimeUtils.format(System.currentTimeMillis(),"yy-MM-dd HH:mm:ss");
+        Document doc = Jsoup.parse(HttpUtils.getHtml("https://ncov.dxy.cn/ncovh5/view/pneumonia"));
         // 1、解析页面中省份的JSON  id = getAreaStat
         String crawler = doc.select("script[id=getAreaStat]").toString();
         // 2、用正则表达式去掉 json前后数据
@@ -84,11 +86,13 @@ public class Covid19Crawler {
                 mostSeriousService.saveOrUpdate(serious, mostWrapper);
             }
         }
-        System.out.println("DetailsCrawler==>已经修改地图数据以及获取最严重省份数据1");
+        log.info("detailsCrawler执行完毕");
         this.historyBean();
     }
 
     public void historyBean(){
+        String time = TimeUtils.format(System.currentTimeMillis(),"yy-MM-dd HH:mm:ss");
+        Document doc = Jsoup.parse(HttpUtils.getHtml("https://ncov.dxy.cn/ncovh5/view/pneumonia"));
         // 1、解析网页中的较昨日json //getListByCountryTypeService2true
         Elements element = doc.select("script[id=getListByCountryTypeService2true]");
         String crawler = element.toString();
@@ -105,11 +109,13 @@ public class Covid19Crawler {
             update.eq("province_name",bean.getProvinceName());
             historyService.saveOrUpdate(bean,update) ;
         }
-        System.out.println("HistoryCrawler == >获取世界疫情数据2");
+        log.info("historyBean执行完毕");
         this.trendCrawler();
     }
 
     public void trendCrawler() {
+        String time = TimeUtils.format(System.currentTimeMillis(),"yy-MM-dd HH:mm:ss");
+        Document doc = Jsoup.parse(HttpUtils.getHtml("https://ncov.dxy.cn/ncovh5/view/pneumonia"));
         // 1、 爬取json
         QueryWrapper<History> wrapper = new QueryWrapper<>();
         wrapper.eq("province_name", "中国");
@@ -128,7 +134,7 @@ public class Covid19Crawler {
                 trendService.save(trend);
             }
         }
-        System.out.println("TrendCrawler==》新增数据变化3");
+        log.info("trendCrawler执行完毕");
     }
 
 }

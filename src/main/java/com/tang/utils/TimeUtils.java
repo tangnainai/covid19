@@ -9,5 +9,4 @@ public abstract class TimeUtils {
     public static String format(Long timestamp,String pattern){
         return FastDateFormat.getInstance(pattern).format(timestamp);
     }
-
 }
